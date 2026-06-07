@@ -1,0 +1,1905 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="botler · sovereign personal memory agent · remembers what you forgot · finds anything at a drop of a hat · WebLLM offline · OAuth · your machine · your data">
+<title>botler · sovereign memory agent</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0f'/%3E%3Ctext x='32' y='44' font-family='Times New Roman, serif' font-size='40' font-weight='700' text-anchor='middle' fill='%23c2a060'%3Eb%3C/text%3E%3C/svg%3E">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   ◊·κ=φ⁴ · botler · prime 619 · sovereign memory agent
+   palette: deep void · warm brass accent · sovereign cream text
+   "your machine · your data · nobody else involved"
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --void: #0a0a0f;
+  --void-2: #14141a;
+  --void-3: #1e1e26;
+  --void-4: #2a2a35;
+  --cream: #e8e6dd;
+  --cream-2: #c8c6bd;
+  --cream-dim: #8a8880;
+  --cream-faint: #5a584f;
+
+  /* brass · the colour of memory · old, warm, trustworthy */
+  --brass: #c2a060;
+  --brass-2: #a88848;
+  --brass-3: #8a6e38;
+  --brass-faint: #5a4828;
+  --brass-glow: rgba(194, 160, 96, 0.12);
+
+  --success: #10b981;
+  --success-dim: #047857;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --info: #818cf8;
+
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif: 'Times New Roman', Georgia, serif;
+
+  --tap: 48px;
+  --tap-lg: 56px;
+  --gutter: 16px;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --max-w: 920px;
+}
+
+html, body {
+  background: var(--void);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 0% 0%, var(--brass-glow), transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(139, 26, 26, 0.04), transparent 50%);
+  background-attachment: fixed;
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-radius: 4px; }
+
+/* ═══════════ TOP NAV ═══════════ */
+.top {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--void-3);
+}
+.top-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px var(--gutter);
+  max-width: var(--max-w); margin: 0 auto;
+  min-height: var(--tap);
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 17px; letter-spacing: -0.01em;
+  text-decoration: none; color: var(--cream);
+}
+.brand .mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--brass), var(--brass-2));
+  color: var(--void); font-family: var(--font-serif); font-weight: 700; font-size: 18px;
+}
+.brand .lo { color: var(--cream); font-style: italic; }
+.top-spacer { flex: 1; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; font-size: 11px;
+  background: var(--void-3); color: var(--cream-dim);
+  border-radius: 999px; border: 1px solid var(--void-4);
+  letter-spacing: 0.04em; cursor: pointer;
+}
+.chip:hover { color: var(--cream); border-color: var(--brass-faint); }
+.chip .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--cream-faint); display: inline-block;
+}
+.chip.live .dot { background: var(--success); }
+.chip.loading .dot { background: var(--warn); animation: pulse 1.4s ease-in-out infinite; }
+.chip.warn .dot { background: var(--warn); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ═══════════ DISCLAIMER ═══════════ */
+.disc {
+  background: var(--void-2);
+  border-bottom: 1px solid var(--void-3);
+  color: var(--cream-dim);
+  font-size: 12px; text-align: center;
+  padding: 8px var(--gutter); line-height: 1.4;
+}
+.disc strong { color: var(--cream); font-weight: 600; }
+
+/* ═══════════ MAIN ═══════════ */
+main {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--gutter);
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  min-height: calc(100vh - 200px);
+}
+
+.view { display: none; animation: fade 0.2s ease; }
+.view.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════ HERO ═══════════ */
+.hero {
+  padding: 24px 0 18px;
+}
+.hero h1 {
+  font-size: 26px; font-weight: 700; letter-spacing: -0.02em;
+  line-height: 1.15; color: var(--cream); margin-bottom: 8px;
+  font-family: var(--font-serif); font-style: italic;
+}
+.hero p {
+  color: var(--cream-dim); font-size: 15px; max-width: 560px;
+}
+@media (min-width: 720px) {
+  .hero h1 { font-size: 34px; }
+}
+
+/* ═══════════ COMMAND CARDS ═══════════ */
+.cmds {
+  display: grid; grid-template-columns: 1fr; gap: 10px;
+  margin-bottom: 22px;
+}
+@media (min-width: 540px) { .cmds { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 760px) { .cmds { grid-template-columns: repeat(5, 1fr); } }
+
+.cmd {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 14px 12px;
+  text-align: center; cursor: pointer;
+  transition: border-color 0.15s, transform 0.05s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-decoration: none; color: inherit;
+}
+.cmd:hover { border-color: var(--brass); }
+.cmd:active { transform: scale(0.99); }
+.cmd .ico { font-size: 22px; }
+.cmd .name {
+  font-size: 13px; font-weight: 600; color: var(--cream);
+  font-family: var(--font-mono);
+}
+.cmd .desc { font-size: 11px; color: var(--cream-dim); line-height: 1.3; }
+
+/* ═══════════ COMMAND PROMPT (the main interaction) ═══════════ */
+.prompt-wrap {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.prompt-label {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  font-size: 11px; color: var(--cream-dim);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+}
+.prompt-label .pre {
+  font-family: var(--font-mono); color: var(--brass);
+  background: var(--brass-glow); padding: 2px 8px; border-radius: 4px;
+  font-size: 12px;
+}
+.prompt {
+  width: 100%; min-height: 48px;
+  background: transparent; border: 0;
+  color: var(--cream); font-size: 16px; font-family: inherit;
+  resize: vertical;
+}
+.prompt::placeholder { color: var(--cream-faint); }
+.prompt-actions {
+  display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;
+}
+.prompt-actions .ai-status {
+  font-size: 11px; color: var(--cream-dim); margin-left: auto;
+  font-family: var(--font-mono);
+}
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px; padding: 8px 16px;
+  font-size: 14px; font-weight: 600;
+  border-radius: var(--radius-sm); border: 1px solid transparent;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  -webkit-appearance: none; appearance: none;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--brass); color: var(--void); border-color: var(--brass); font-weight: 700; }
+.btn-primary:hover { background: var(--brass-2); }
+.btn-ghost { background: var(--void-3); color: var(--cream); border-color: var(--void-3); }
+.btn-ghost:hover { border-color: var(--brass); color: var(--brass); }
+.btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover { background: rgba(239, 68, 68, 0.08); }
+.btn-link { background: none; color: var(--brass); border: 0; min-height: auto; padding: 4px 0; font-size: 13px; }
+.btn-link:hover { text-decoration: underline; }
+.btn-sm { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+
+/* ═══════════ RESPONSE PANEL ═══════════ */
+.response {
+  background: var(--void-2); border: 1px solid var(--brass-faint);
+  border-left: 3px solid var(--brass);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  animation: fade 0.25s ease;
+}
+.response .head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--brass);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+  margin-bottom: 8px;
+}
+.response .body {
+  font-size: 15px; color: var(--cream); line-height: 1.6;
+  white-space: pre-wrap;
+}
+.response .body code {
+  background: var(--void-3); padding: 1px 6px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 0.9em; color: var(--brass);
+}
+.response .body a { color: var(--brass); }
+.response .actions {
+  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+}
+
+/* ═══════════ SECTION TITLES ═══════════ */
+.section-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--cream-dim); margin: 20px 0 10px; font-weight: 600;
+}
+
+/* ═══════════ MEMORY CARDS ═══════════ */
+.mem-list { display: flex; flex-direction: column; gap: 8px; }
+.mem-card {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 12px 14px;
+  cursor: pointer; transition: border-color 0.15s;
+  text-decoration: none; color: inherit; display: block;
+}
+.mem-card:hover { border-color: var(--brass); }
+.mem-card .title {
+  font-weight: 600; color: var(--cream); font-size: 14px;
+  margin-bottom: 3px;
+}
+.mem-card .meta {
+  font-size: 11px; color: var(--cream-dim);
+  font-family: var(--font-mono);
+}
+.mem-card .preview {
+  margin-top: 4px; font-size: 13px; color: var(--cream-2);
+  max-height: 40px; overflow: hidden; line-height: 1.4;
+}
+.mem-card .tags {
+  display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;
+}
+.mem-card .tag {
+  font-size: 10px; padding: 1px 6px;
+  background: var(--brass-glow); color: var(--brass);
+  border-radius: 3px;
+}
+
+/* ═══════════ FORM ELEMENTS ═══════════ */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 11px; font-weight: 500;
+  color: var(--cream-2); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.field input, .field textarea, .field select {
+  width: 100%; min-height: 42px;
+  padding: 10px 12px;
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius-sm); color: var(--cream);
+  font-size: 15px; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--brass); background: var(--void);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--cream-faint); }
+.field textarea { resize: vertical; min-height: 60px; font-family: inherit; line-height: 1.5; }
+.field .hint { font-size: 12px; color: var(--cream-dim); margin-top: 4px; line-height: 1.4; }
+.field-row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+@media (min-width: 540px) { .field-row { grid-template-columns: 1fr 1fr; } }
+
+/* ═══════════ BOTTOM TABS ═══════════ */
+.tabs {
+  display: flex;
+  background: var(--void-2);
+  border-top: 1px solid var(--void-3);
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+.tab {
+  flex: 1;
+  background: none; border: 0;
+  color: var(--cream-dim);
+  padding: 8px 4px 10px;
+  font-size: 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; position: relative;
+  transition: color 0.15s;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.tab .icon { font-size: 18px; line-height: 1; }
+.tab.active { color: var(--brass); }
+.tab.active::before {
+  content: '';
+  position: absolute; top: 0; left: 30%; right: 30%; height: 2px;
+  background: var(--brass); border-radius: 0 0 3px 3px;
+}
+
+/* ═══════════ TOAST ═══════════ */
+.toast {
+  position: fixed; bottom: calc(80px + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--void-3); border: 1px solid var(--void-4);
+  color: var(--cream); padding: 10px 18px;
+  border-radius: 999px; font-size: 13px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 200;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast.success { border-color: var(--success-dim); color: var(--success); }
+.toast.error { border-color: var(--danger); color: var(--danger); }
+
+/* ═══════════ MODAL ═══════════ */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; padding: var(--gutter);
+}
+.modal.open { display: flex; }
+.modal-inner {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 20px;
+  max-width: 560px; width: 100%; max-height: 88vh; overflow-y: auto;
+}
+.modal h3 { font-size: 18px; margin-bottom: 6px; color: var(--cream); }
+.modal p { color: var(--cream-dim); font-size: 14px; margin-bottom: 12px; }
+
+/* ═══════════ AI LOADER ═══════════ */
+.ai-loader {
+  background: linear-gradient(135deg, var(--brass-glow), transparent);
+  border: 1px solid var(--brass-faint);
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: var(--cream-2);
+}
+.ai-loader .spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--brass-faint);
+  border-top-color: var(--brass);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loader .progress {
+  flex: 1; height: 3px; background: var(--void-3);
+  border-radius: 2px; overflow: hidden;
+}
+.ai-loader .progress .fill {
+  height: 100%; background: var(--brass);
+  width: 0%; transition: width 0.2s ease;
+}
+
+/* ═══════════ INBOX ═══════════ */
+.dropzone {
+  border: 2px dashed var(--void-3); border-radius: var(--radius);
+  padding: 32px 18px; text-align: center;
+  color: var(--cream-dim); cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 14px;
+}
+.dropzone.over { border-color: var(--brass); background: var(--brass-glow); color: var(--brass); }
+.dropzone .emoji { font-size: 32px; margin-bottom: 8px; opacity: 0.6; }
+.dropzone .ttl { font-size: 14px; color: var(--cream-2); margin-bottom: 4px; }
+
+/* ═══════════ EMPTY STATES ═══════════ */
+.empty {
+  text-align: center; padding: 40px 16px;
+  color: var(--cream-dim);
+}
+.empty .emoji { font-size: 36px; margin-bottom: 10px; opacity: 0.5; }
+.empty .ttl { font-size: 15px; color: var(--cream-2); margin-bottom: 4px; }
+.empty .sub { font-size: 13px; }
+
+/* ═══════════ PHILOSOPHY BOX ═══════════ */
+.phil {
+  background: linear-gradient(135deg, var(--brass-glow), transparent);
+  border: 1px solid var(--brass-faint);
+  border-radius: var(--radius); padding: 16px 18px;
+  margin: 20px 0;
+}
+.phil h3 {
+  font-size: 12px; color: var(--brass);
+  margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.phil p { font-size: 14px; color: var(--cream-2); line-height: 1.55; }
+
+/* ═══════════ FOOTER ═══════════ */
+footer {
+  max-width: var(--max-w); margin: 32px auto 0;
+  padding: 20px var(--gutter);
+  text-align: center; font-size: 11px;
+  color: var(--cream-faint); border-top: 1px solid var(--void-3);
+}
+footer .mark { color: var(--brass); font-family: var(--font-serif); font-weight: 700; font-size: 13px; }
+footer a { color: var(--cream-dim); text-decoration: none; }
+footer a:hover { color: var(--brass); }
+
+.dim { color: var(--cream-dim); }
+.small { font-size: 13px; }
+.tiny { font-size: 11px; }
+.mono { font-family: var(--font-mono); }
+.center { text-align: center; }
+.hr { height: 1px; background: var(--void-3); margin: 18px 0; }
+</style>
+</head>
+<body>
+
+<!-- DISCLAIMER -->
+<div class="disc">
+  <strong>Your machine · your data · nobody else involved.</strong> WebLLM runs in-browser. OAuth tokens stay on device.
+</div>
+
+<!-- TOP NAV -->
+<header class="top">
+  <div class="top-row">
+    <a href="#" class="brand" onclick="goTab('home'); return false;">
+      <span class="mark">b</span>
+      <span><span class="lo">botler</span></span>
+    </a>
+    <div class="top-spacer"></div>
+    <span class="chip" id="aiChip" onclick="openAiPanel()">
+      <span class="dot"></span><span id="aiChipText">T0</span>
+    </span>
+    <span class="chip" id="syncChip" onclick="goTab('settings')">
+      <span class="dot"></span><span>sovereign</span>
+    </span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HOME · the prompt + 5 commands + recent memory -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <h1>What do you want me to remember?</h1>
+      <p>Five commands. One prompt. Your memory · your machine · nobody else involved.</p>
+    </div>
+
+    <!-- The prompt -->
+    <div class="prompt-wrap">
+      <div class="prompt-label">
+        <span class="pre" id="promptPre">botler</span>
+        <span>type a command · or just talk</span>
+      </div>
+      <textarea class="prompt" id="prompt" rows="2"
+        placeholder="botler remember: finished the API audit. Key contacts: Dr Mueller, Prof Tanaka. Next: follow up by June 15."></textarea>
+      <div class="prompt-actions">
+        <button class="btn btn-primary" onclick="runPrompt()">run</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearPrompt()">clear</button>
+        <span class="ai-status" id="aiStatus">T0 · grep mode · no AI needed</span>
+      </div>
+    </div>
+
+    <!-- 5 command shortcuts -->
+    <div class="cmds">
+      <a href="#" class="cmd" onclick="cmd('remember'); return false;">
+        <span class="ico">📝</span>
+        <span class="name">remember</span>
+        <span class="desc">log something</span>
+      </a>
+      <a href="#" class="cmd" onclick="cmd('whatdid'); return false;">
+        <span class="ico">📅</span>
+        <span class="name">whatdid</span>
+        <span class="desc">recall the past</span>
+      </a>
+      <a href="#" class="cmd" onclick="cmd('prep'); return false;">
+        <span class="ico">🎯</span>
+        <span class="name">prep</span>
+        <span class="desc">for a meeting</span>
+      </a>
+      <a href="#" class="cmd" onclick="cmd('find'); return false;">
+        <span class="ico">🔍</span>
+        <span class="name">find</span>
+        <span class="desc">search everything</span>
+      </a>
+      <a href="#" class="cmd" onclick="cmd('journal'); return false;">
+        <span class="ico">🌙</span>
+        <span class="name">journal</span>
+        <span class="desc">end of day</span>
+      </a>
+    </div>
+
+    <!-- Response panel -->
+    <div id="responseMount"></div>
+
+    <!-- Recent memory -->
+    <div class="section-title">Recent · last 5</div>
+    <div id="recentList"><div class="empty"><div class="emoji">◊</div><div class="ttl">Nothing yet</div><div class="sub">Tell me what to remember.</div></div></div>
+
+    <div class="phil">
+      <h3>the trust model</h3>
+      <p>I run on your device. Memory lives in your browser's IndexedDB. WebLLM runs locally — no API call unless you opt in. OAuth tokens stay client-side. If you trust your hard drive with your documents, you can trust me with your memory. Same storage, same access, same security.</p>
+    </div>
+  </section>
+
+  <!-- MEMORY · browse all -->
+  <section class="view" id="view-memory">
+    <div class="hero">
+      <h1>All memory</h1>
+      <p>Everything I've remembered for you · daily summaries · projects · people · raw notes.</p>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">find</span><span>or filter by tag · date · person</span></div>
+      <input type="text" class="prompt" id="memSearch" placeholder="full-text search across all memory" onkeyup="filterMemory()">
+    </div>
+
+    <div class="section-title">Daily summaries</div>
+    <div id="dailyList"></div>
+
+    <div class="section-title">Projects</div>
+    <div id="projectsList"></div>
+
+    <div class="section-title">People</div>
+    <div id="peopleList"></div>
+
+    <div class="section-title">Raw notes</div>
+    <div id="notesList"></div>
+  </section>
+
+  <!-- INBOX · drop files · paste URLs · pull mail -->
+  <section class="view" id="view-inbox">
+    <div class="hero">
+      <h1>Inbox</h1>
+      <p>Drop a file · paste a URL · pull email. I'll process it · summarise it · log it in memory.</p>
+    </div>
+
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+      <div class="emoji">📥</div>
+      <div class="ttl">Drop files here · or click to pick</div>
+      <div class="small">PDF · text · images · audio (m4a / wav) · URLs</div>
+    </div>
+    <input type="file" id="fileInput" multiple style="display:none" onchange="handleFiles(this.files)">
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">paste</span><span>URL · text · email body</span></div>
+      <textarea class="prompt" id="pasteInput" rows="3" placeholder="https://example.com/article&#10;&#10;or paste an email · or any text · I'll handle it"></textarea>
+      <div class="prompt-actions">
+        <button class="btn btn-primary" onclick="processPaste()">process</button>
+      </div>
+    </div>
+
+    <div id="gmailMount"></div>
+
+    <div class="section-title">Processed (last 10)</div>
+    <div id="processedList"></div>
+  </section>
+
+  <!-- INTEGRATIONS · OAuth · calendar · gmail -->
+  <section class="view" id="view-integrations">
+    <div class="hero">
+      <h1>Integrations</h1>
+      <p>OAuth handles every connection. Tokens stay on your device. Read-only by default · I never write to your accounts.</p>
+    </div>
+
+    <div id="integrationsList"></div>
+
+    <div class="phil">
+      <h3>about OAuth scopes</h3>
+      <p>I ask for the <strong>minimum read-only scope</strong> each service supports. Gmail metadata + message bodies. Calendar event list. Drive file listing only. I never request "send mail" or "manage calendar" scopes. Your token goes from Google to your browser to my IndexedDB. Nobody else sees it. You can revoke any time in your Google security settings.</p>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings">
+    <div class="hero">
+      <h1>Settings</h1>
+      <p>One file's worth of config · all stored client-side · export at any time.</p>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">you</span></div>
+      <div class="field"><label>Your name</label><input type="text" id="cfg_name" placeholder="Alex"></div>
+      <div class="field"><label>Timezone</label><input type="text" id="cfg_tz" placeholder="America/New_York"></div>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">ai</span></div>
+      <div class="field">
+        <label>Cascade tier</label>
+        <select id="cfg_tier">
+          <option value="T0">T0 · grep only · no AI · always works</option>
+          <option value="T2">T2 · WebLLM in-browser · ~2GB model download · sovereign</option>
+          <option value="T3">T3 · BYOK API · Claude / OpenAI / Gemini · key stays on device</option>
+        </select>
+        <div class="hint">T2 is recommended once · downloads ~2GB on first use · then runs offline forever.</div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>API provider (T3 only)</label>
+          <select id="cfg_apiprov">
+            <option value="">— pick —</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="openai">OpenAI</option>
+            <option value="google">Google Gemini</option>
+          </select>
+        </div>
+        <div class="field"><label>API key</label><input type="password" id="cfg_apikey" placeholder="sk-ant-... · or sk-..."></div>
+      </div>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">journal</span></div>
+      <div class="field-row">
+        <div class="field"><label>Auto-journal time</label><input type="time" id="cfg_jt" value="23:00"></div>
+        <div class="field">
+          <label>Auto-journal</label>
+          <select id="cfg_aj">
+            <option value="true">enabled</option>
+            <option value="false">manual only</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">data</span></div>
+      <div style="display:flex; gap:8px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="saveConfig()">save</button>
+        <button class="btn btn-ghost" onclick="exportAll()">export all memory (zip)</button>
+        <button class="btn btn-ghost" onclick="exportConfig()">export config.json</button>
+        <button class="btn btn-ghost" onclick="importMemory()">import .zip / .json</button>
+      </div>
+      <div class="hr"></div>
+      <div style="display:flex; gap:8px; flex-wrap: wrap;">
+        <button class="btn btn-danger" onclick="wipeAll()">wipe everything</button>
+        <span class="tiny dim" style="align-self:center">cannot be undone · export first</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM TABS -->
+<nav class="tabs">
+  <button class="tab active" data-tab="home" onclick="goTab('home')">
+    <span class="icon">◊</span><span>home</span>
+  </button>
+  <button class="tab" data-tab="memory" onclick="goTab('memory')">
+    <span class="icon">📚</span><span>memory</span>
+  </button>
+  <button class="tab" data-tab="inbox" onclick="goTab('inbox')">
+    <span class="icon">📥</span><span>inbox</span>
+  </button>
+  <button class="tab" data-tab="integrations" onclick="goTab('integrations')">
+    <span class="icon">🔗</span><span>oauth</span>
+  </button>
+  <button class="tab" data-tab="settings" onclick="goTab('settings')">
+    <span class="icon">⚙</span><span>settings</span>
+  </button>
+</nav>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <h3 id="modalTitle">Title</h3>
+    <div id="modalBody"></div>
+    <div style="display:flex; gap:8px; flex-wrap: wrap; margin-top: 14px;" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div><span class="mark">◊·κ=φ⁴</span> · botler · prime 619</div>
+  <div style="margin-top: 4px">Sovereign memory agent · WebLLM in-browser · OAuth client-side · <a href="https://github.com/sjgant80-hub/botler" target="_blank">MIT</a></div>
+  <div style="margin-top: 4px">Your machine · your data · nobody else involved · trust your hard drive</div>
+</footer>
+
+<!-- EU AI Act Article 12 audit shim -->
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="botler" data-tier="limited" defer></script>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════
+   ◊·κ=φ⁴ · botler · prime 619
+   sovereign personal memory agent · single-file HTML
+   ═══════════════════════════════════════════════════════════════ */
+
+const NODE = {
+  id: 'botler',
+  name: 'botler',
+  prime: 619,
+  domain: 'sovereign personal memory agent',
+  version: '1.0.0',
+  built: '2026-06-07',
+};
+
+/* ═══════════ CONFIG ═══════════ */
+const STORE_KEY = 'botler.config';
+const DEFAULT_CONFIG = {
+  name: '',
+  timezone: 'UTC',
+  tier: 'T0',
+  api_provider: '',
+  api_key: '',
+  journal_time: '23:00',
+  auto_journal: true,
+  oauth: {
+    google: null,
+  },
+  _meta: { version: NODE.version, first_run: true }
+};
+
+let CONFIG = { ...DEFAULT_CONFIG };
+
+function loadConfig() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) CONFIG = { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+  } catch (_) {}
+}
+function saveConfigSilent() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(CONFIG)); } catch (_) {}
+}
+
+function saveConfig() {
+  CONFIG.name = $('#cfg_name').value || CONFIG.name;
+  CONFIG.timezone = $('#cfg_tz').value || CONFIG.timezone;
+  CONFIG.tier = $('#cfg_tier').value;
+  CONFIG.api_provider = $('#cfg_apiprov').value;
+  CONFIG.api_key = $('#cfg_apikey').value || CONFIG.api_key;
+  CONFIG.journal_time = $('#cfg_jt').value || CONFIG.journal_time;
+  CONFIG.auto_journal = $('#cfg_aj').value === 'true';
+  CONFIG._meta.first_run = false;
+  saveConfigSilent();
+  toast('saved · everything updates', 'success');
+  renderAiChip();
+  scheduleJournal();
+}
+
+function fillConfigForm() {
+  $('#cfg_name').value = CONFIG.name || '';
+  $('#cfg_tz').value = CONFIG.timezone || '';
+  $('#cfg_tier').value = CONFIG.tier || 'T0';
+  $('#cfg_apiprov').value = CONFIG.api_provider || '';
+  $('#cfg_apikey').value = CONFIG.api_key || '';
+  $('#cfg_jt').value = CONFIG.journal_time || '23:00';
+  $('#cfg_aj').value = CONFIG.auto_journal ? 'true' : 'false';
+}
+
+/* ═══════════ DB · IndexedDB ═══════════ */
+const DB_NAME = 'botler';
+const DB_VER = 1;
+let DB = null;
+
+function dbOpen() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB_NAME, DB_VER);
+    r.onupgradeneeded = (e) => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('memory')) {
+        const s = d.createObjectStore('memory', { keyPath: 'id' });
+        s.createIndex('kind', 'kind');
+        s.createIndex('ts', 'ts');
+      }
+      if (!d.objectStoreNames.contains('inbox')) {
+        d.createObjectStore('inbox', { keyPath: 'id' });
+      }
+      if (!d.objectStoreNames.contains('blob')) {
+        d.createObjectStore('blob', { keyPath: 'id' });
+      }
+    };
+    r.onsuccess = (e) => { DB = e.target.result; res(DB); };
+    r.onerror = (e) => rej(e.target.error);
+  });
+}
+
+function dbPut(store, value) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction(store, 'readwrite');
+    tx.objectStore(store).put(value);
+    tx.oncomplete = () => res(value);
+    tx.onerror = (e) => rej(e.target.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction(store, 'readonly');
+    const r = tx.objectStore(store).getAll();
+    r.onsuccess = () => res(r.result || []);
+    r.onerror = (e) => rej(e.target.error);
+  });
+}
+
+function dbDelete(store, id) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction(store, 'readwrite');
+    tx.objectStore(store).delete(id);
+    tx.oncomplete = res;
+    tx.onerror = (e) => rej(e.target.error);
+  });
+}
+
+function dbClear(store) {
+  return new Promise((res, rej) => {
+    const tx = DB.transaction(store, 'readwrite');
+    tx.objectStore(store).clear();
+    tx.oncomplete = res;
+    tx.onerror = (e) => rej(e.target.error);
+  });
+}
+
+/* ═══════════ MEMORY MODEL ═══════════ */
+const MEM_KINDS = {
+  DAILY:   'daily',
+  PROJECT: 'project',
+  PERSON:  'person',
+  NOTE:    'note',
+};
+
+let STATE = {
+  memory: [],   // [{ id, kind, title, content, ts, tags[], people[], deadlines[] }]
+  inbox: [],
+  ai: { ready: false, loading: false, engine: null, progress: 0, model: '' },
+};
+
+function genId(p) {
+  const arr = crypto.getRandomValues(new Uint8Array(6));
+  const hex = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  return p + '_' + hex;
+}
+
+function isoNow() { return new Date().toISOString(); }
+function isoDate(d) { return (d ? new Date(d) : new Date()).toISOString().slice(0, 10); }
+
+/* ═══════════ HELPERS ═══════════ */
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return [...document.querySelectorAll(sel)]; }
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = $('#toast');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function modal(opts) {
+  $('#modalTitle').textContent = opts.title || '';
+  $('#modalBody').innerHTML = opts.body || '';
+  const actions = $('#modalActions');
+  actions.innerHTML = '';
+  (opts.actions || [{ label: 'Close', kind: 'ghost', onClick: closeModal }]).forEach(a => {
+    const b = document.createElement('button');
+    b.className = `btn btn-${a.kind || 'ghost'}`;
+    b.textContent = a.label;
+    b.onclick = () => (a.onClick || closeModal)();
+    actions.appendChild(b);
+  });
+  $('#modal').classList.add('open');
+}
+function closeModal() { $('#modal').classList.remove('open'); }
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+
+function goTab(tab) {
+  $$('.view').forEach(v => v.classList.remove('active'));
+  const v = document.getElementById('view-' + tab);
+  if (v) v.classList.add('active');
+  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  window.scrollTo(0, 0);
+  if (tab === 'home') renderHome();
+  else if (tab === 'memory') renderMemory();
+  else if (tab === 'inbox') renderInbox();
+  else if (tab === 'integrations') renderIntegrations();
+  else if (tab === 'settings') { fillConfigForm(); }
+}
+
+/* ═══════════ AI CASCADE ═══════════ */
+function aiTier() { return CONFIG.tier || 'T0'; }
+
+function renderAiChip() {
+  const chip = $('#aiChip');
+  const txt = $('#aiChipText');
+  const tier = aiTier();
+  chip.classList.remove('live', 'loading', 'warn');
+  if (tier === 'T0') {
+    txt.textContent = 'T0 grep';
+    chip.classList.add('live');
+  } else if (tier === 'T2') {
+    if (STATE.ai.ready) { txt.textContent = 'T2 WebLLM · ready'; chip.classList.add('live'); }
+    else if (STATE.ai.loading) { txt.textContent = `T2 loading ${Math.round(STATE.ai.progress)}%`; chip.classList.add('loading'); }
+    else { txt.textContent = 'T2 WebLLM · click to load'; chip.classList.add('warn'); }
+  } else if (tier === 'T3') {
+    if (CONFIG.api_key) { txt.textContent = `T3 ${CONFIG.api_provider || 'BYOK'}`; chip.classList.add('live'); }
+    else { txt.textContent = 'T3 · no key set'; chip.classList.add('warn'); }
+  }
+  $('#aiStatus').textContent = txt.textContent;
+}
+
+function openAiPanel() {
+  const tier = aiTier();
+  let body = `<p>Current tier: <code>${tier}</code></p>`;
+  if (tier === 'T0') {
+    body += `<p>T0 uses keyword search across your memory. Works always · zero cost · zero AI · zero install.</p><p>Upgrade to T2 in <a href="#" onclick="closeModal(); goTab('settings'); return false;">Settings</a> for sovereign in-browser AI.</p>`;
+  } else if (tier === 'T2') {
+    if (STATE.ai.ready) body += `<p>WebLLM ready · model: ${esc(STATE.ai.model)}</p><p>All AI inference runs in your browser. No data leaves the device.</p>`;
+    else if (STATE.ai.loading) body += `<p>Loading model · ${Math.round(STATE.ai.progress)}%</p><p>First load downloads ~2GB. After that, the model runs offline forever.</p>`;
+    else body += `<p>WebLLM is configured but not loaded. Click below to download the model.</p>`;
+  } else if (tier === 'T3') {
+    if (CONFIG.api_key) body += `<p>T3 active · ${esc(CONFIG.api_provider)} · key stays on your device.</p>`;
+    else body += `<p>Set an API key in <a href="#" onclick="closeModal(); goTab('settings'); return false;">Settings</a> to enable.</p>`;
+  }
+  const actions = [{ label: 'Close', kind: 'ghost', onClick: closeModal }];
+  if (tier === 'T2' && !STATE.ai.ready && !STATE.ai.loading) {
+    actions.unshift({ label: 'Load WebLLM model', kind: 'primary', onClick: () => { closeModal(); loadWebLLM(); } });
+  }
+  modal({ title: 'AI cascade', body, actions });
+}
+
+/* ═══════════ WEBLLM ═══════════ */
+const WEBLLM_MODEL = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
+
+async function loadWebLLM() {
+  if (STATE.ai.loading || STATE.ai.ready) return;
+  STATE.ai.loading = true;
+  STATE.ai.progress = 0;
+  renderAiChip();
+  toast('loading WebLLM · ~2GB first time', 'success');
+  try {
+    const { CreateMLCEngine } = await import('https://esm.run/@mlc-ai/web-llm@0.2.79');
+    const engine = await CreateMLCEngine(WEBLLM_MODEL, {
+      initProgressCallback: (p) => {
+        STATE.ai.progress = (p.progress || 0) * 100;
+        renderAiChip();
+      },
+    });
+    STATE.ai.engine = engine;
+    STATE.ai.model = WEBLLM_MODEL;
+    STATE.ai.ready = true;
+    STATE.ai.loading = false;
+    renderAiChip();
+    toast('WebLLM ready · sovereign mode', 'success');
+  } catch (e) {
+    console.error('webllm load failed', e);
+    STATE.ai.loading = false;
+    renderAiChip();
+    toast('WebLLM load failed · ' + e.message, 'error');
+  }
+}
+
+async function aiComplete(systemPrompt, userMsg, maxTokens = 600) {
+  const tier = aiTier();
+  if (tier === 'T2' && STATE.ai.ready && STATE.ai.engine) {
+    const r = await STATE.ai.engine.chat.completions.create({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMsg },
+      ],
+      max_tokens: maxTokens,
+    });
+    return r.choices[0].message.content;
+  }
+  if (tier === 'T3' && CONFIG.api_key && CONFIG.api_provider) {
+    return await aiCloudCall(systemPrompt, userMsg, maxTokens);
+  }
+  return null; // T0 fallback
+}
+
+async function aiCloudCall(systemPrompt, userMsg, maxTokens) {
+  if (CONFIG.api_provider === 'anthropic') {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CONFIG.api_key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMsg }],
+      }),
+    });
+    if (!r.ok) throw new Error('anthropic: ' + r.status);
+    const j = await r.json();
+    return j.content[0].text;
+  }
+  if (CONFIG.api_provider === 'openai') {
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + CONFIG.api_key },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: maxTokens,
+        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMsg }],
+      }),
+    });
+    if (!r.ok) throw new Error('openai: ' + r.status);
+    const j = await r.json();
+    return j.choices[0].message.content;
+  }
+  if (CONFIG.api_provider === 'google') {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.api_key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: 'user', parts: [{ text: userMsg }] }],
+      }),
+    });
+    if (!r.ok) throw new Error('google: ' + r.status);
+    const j = await r.json();
+    return j.candidates[0].content.parts[0].text;
+  }
+  throw new Error('no provider configured');
+}
+
+/* ═══════════ COMMANDS ═══════════ */
+function cmd(name) {
+  const presets = {
+    remember: 'remember: ',
+    whatdid:  'what did I do ',
+    prep:     'prep me for ',
+    find:     'find ',
+    journal:  'journal',
+  };
+  $('#prompt').value = presets[name] || '';
+  $('#prompt').focus();
+  $('#promptPre').textContent = 'botler';
+  if (name === 'journal') runPrompt();
+}
+
+function clearPrompt() {
+  $('#prompt').value = '';
+  $('#responseMount').innerHTML = '';
+}
+
+function detectCommand(text) {
+  const t = text.toLowerCase().trim();
+  if (t.startsWith('remember:') || t.startsWith('remember ')) return 'remember';
+  if (t.startsWith('what did') || t.startsWith('whatdid')) return 'whatdid';
+  if (t.startsWith('prep') || t.startsWith('prepare')) return 'prep';
+  if (t.startsWith('find ') || t.startsWith('search ')) return 'find';
+  if (t.startsWith('journal') || t === 'eod' || t === 'end of day') return 'journal';
+  return 'remember'; // default: treat as a memory
+}
+
+async function runPrompt() {
+  const text = $('#prompt').value.trim();
+  if (!text) return;
+  const command = detectCommand(text);
+  const argText = text.replace(/^(remember:?|what did|whatdid|prep|prepare|find|search|journal)\s*/i, '').trim();
+
+  showAiLoader();
+  try {
+    let out;
+    if (command === 'remember') out = await cmdRemember(argText);
+    else if (command === 'whatdid') out = await cmdWhatDid(argText);
+    else if (command === 'prep') out = await cmdPrep(argText);
+    else if (command === 'find') out = await cmdFind(argText);
+    else if (command === 'journal') out = await cmdJournal();
+    showResponse(command, out);
+  } catch (e) {
+    console.error(e);
+    showResponse(command, { error: e.message });
+  }
+}
+
+function showAiLoader() {
+  const tier = aiTier();
+  const text = tier === 'T0' ? 'searching memory...'
+    : tier === 'T2' && STATE.ai.ready ? 'WebLLM thinking · in your browser...'
+    : tier === 'T3' ? 'BYOK API · key client-side...'
+    : 'processing...';
+  $('#responseMount').innerHTML = `
+    <div class="ai-loader">
+      <div class="spinner"></div>
+      <span>${text}</span>
+    </div>
+  `;
+}
+
+function showResponse(command, out) {
+  if (out && out.error) {
+    $('#responseMount').innerHTML = `
+      <div class="response">
+        <div class="head">⚠ error</div>
+        <div class="body">${esc(out.error)}</div>
+      </div>
+    `;
+    return;
+  }
+  const headIcon = { remember: '📝', whatdid: '📅', prep: '🎯', find: '🔍', journal: '🌙' }[command] || '◊';
+  $('#responseMount').innerHTML = `
+    <div class="response">
+      <div class="head">${headIcon} ${command}</div>
+      <div class="body">${out.html || esc(out.text || '')}</div>
+      ${out.actions ? '<div class="actions">' + out.actions.map(a => `<button class="btn btn-sm btn-ghost" onclick="${a.onclick}">${esc(a.label)}</button>`).join('') + '</div>' : ''}
+    </div>
+  `;
+  renderHome();
+}
+
+/* ═══════════ COMMAND · REMEMBER ═══════════ */
+async function cmdRemember(content) {
+  if (!content) return { text: 'tell me what to remember.' };
+
+  // detect kind heuristically
+  const tags = extractTags(content);
+  const people = extractPeople(content);
+  const deadlines = extractDeadlines(content);
+
+  // pick project name from "project:" or title-case noun
+  let title = content.split('\n')[0].slice(0, 60);
+  if (title.length === 60) title += '…';
+
+  const item = {
+    id: genId('mem'),
+    kind: MEM_KINDS.NOTE,
+    title,
+    content,
+    ts: isoNow(),
+    tags,
+    people,
+    deadlines,
+  };
+
+  // optionally auto-classify into project/person via AI
+  if (aiTier() !== 'T0') {
+    const sys = `You are botler · a sovereign personal memory agent. Classify this note. Return JSON: {"kind":"project|person|note", "title":"short title", "tags":["tag1","tag2"]}. Be terse.`;
+    const out = await aiComplete(sys, content, 200);
+    if (out) {
+      try {
+        const j = JSON.parse(out.match(/\{[\s\S]*\}/)[0]);
+        if (j.kind && Object.values(MEM_KINDS).includes(j.kind)) item.kind = j.kind;
+        if (j.title) item.title = j.title;
+        if (Array.isArray(j.tags)) item.tags = [...new Set([...item.tags, ...j.tags])];
+      } catch (_) {}
+    }
+  }
+
+  await dbPut('memory', item);
+  STATE.memory.push(item);
+
+  if (window.__audit?.log) window.__audit.log({ type: 'memory:remember', input: title, metadata: { kind: item.kind } });
+
+  return {
+    text: `remembered · ${item.kind} · "${item.title}"\n\ntags: ${item.tags.join(', ') || '—'}\npeople: ${item.people.join(', ') || '—'}\ndeadlines: ${item.deadlines.join(', ') || '—'}`,
+    actions: [
+      { label: 'view in memory', onclick: `goTab('memory')` },
+    ]
+  };
+}
+
+function extractTags(s) {
+  const tags = [];
+  const tagMatch = s.match(/#\w+/g);
+  if (tagMatch) tags.push(...tagMatch.map(t => t.slice(1)));
+  return tags;
+}
+
+function extractPeople(s) {
+  // very rough: capitalised words that aren't sentence starters
+  const people = [];
+  const m = s.match(/(?:Dr\.?\s|Prof\.?\s|Mr\.?\s|Ms\.?\s|Mrs\.?\s)?\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+/g);
+  if (m) people.push(...m.slice(0, 10));
+  return [...new Set(people)];
+}
+
+function extractDeadlines(s) {
+  const deadlines = [];
+  const months = '(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)';
+  const re = new RegExp(`\\b${months}\\s+\\d{1,2}(?:[,\\s]+\\d{4})?\\b`, 'gi');
+  const m = s.match(re);
+  if (m) deadlines.push(...m);
+  // ISO dates
+  const iso = s.match(/\b\d{4}-\d{2}-\d{2}\b/g);
+  if (iso) deadlines.push(...iso);
+  return [...new Set(deadlines)];
+}
+
+/* ═══════════ COMMAND · WHATDID ═══════════ */
+async function cmdWhatDid(query) {
+  // parse range
+  const range = parseDateRange(query);
+  const items = STATE.memory.filter(m => {
+    const d = new Date(m.ts);
+    return d >= range.from && d <= range.to;
+  });
+
+  if (items.length === 0) {
+    return { text: `nothing logged between ${isoDate(range.from)} and ${isoDate(range.to)}.\n\ntry logging things with "remember:" · or pull from gmail/calendar via Inbox.` };
+  }
+
+  // T0 = bullet list
+  if (aiTier() === 'T0') {
+    let txt = `${items.length} items between ${isoDate(range.from)} and ${isoDate(range.to)}:\n\n`;
+    items.forEach(m => {
+      txt += `· ${isoDate(m.ts)} · ${m.title}\n`;
+    });
+    return { text: txt };
+  }
+
+  // T2/T3: ask AI to summarise
+  const corpus = items.map(m => `[${isoDate(m.ts)} · ${m.kind}] ${m.title}\n${m.content.slice(0, 400)}`).join('\n\n---\n\n');
+  const sys = `You are botler · a sovereign personal memory agent. The user asked: "${query}". Summarise the following memory items from their notes. Be specific. Cite dates. Don't invent facts.`;
+  const summary = await aiComplete(sys, corpus, 800);
+  return { text: summary || items.map(m => `${isoDate(m.ts)} · ${m.title}`).join('\n') };
+}
+
+function parseDateRange(query) {
+  const now = new Date();
+  const q = (query || '').toLowerCase();
+  // "in march" / "in march 2026"
+  const monthMatch = q.match(/in (january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+(\d{4}))?/);
+  if (monthMatch) {
+    const monthIdx = ['january','february','march','april','may','june','july','august','september','october','november','december'].indexOf(monthMatch[1]);
+    const year = monthMatch[2] ? +monthMatch[2] : now.getFullYear();
+    return { from: new Date(year, monthIdx, 1), to: new Date(year, monthIdx + 1, 0, 23, 59, 59) };
+  }
+  // last N days
+  const daysMatch = q.match(/last (\d+) days?/);
+  if (daysMatch) {
+    const from = new Date(now); from.setDate(now.getDate() - (+daysMatch[1]));
+    return { from, to: now };
+  }
+  // this week
+  if (q.includes('this week')) {
+    const from = new Date(now); from.setDate(now.getDate() - 7);
+    return { from, to: now };
+  }
+  // this month
+  if (q.includes('this month')) {
+    return { from: new Date(now.getFullYear(), now.getMonth(), 1), to: now };
+  }
+  // default: last 30 days
+  const from = new Date(now); from.setDate(now.getDate() - 30);
+  return { from, to: now };
+}
+
+/* ═══════════ COMMAND · PREP ═══════════ */
+async function cmdPrep(query) {
+  if (!query) return { text: 'tell me what to prep for · meeting with whom · or which project.' };
+
+  // find anything mentioning the subject
+  const hits = STATE.memory.filter(m =>
+    (m.content + ' ' + m.title).toLowerCase().includes(query.toLowerCase()) ||
+    m.people.some(p => p.toLowerCase().includes(query.toLowerCase())) ||
+    m.tags.some(t => t.toLowerCase().includes(query.toLowerCase()))
+  ).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+
+  if (hits.length === 0) {
+    return { text: `nothing in memory about "${query}".\n\nstart by remembering something: "remember: first meeting with ${query} was..."` };
+  }
+
+  if (aiTier() === 'T0') {
+    let txt = `prep brief · "${query}":\n\n`;
+    hits.slice(0, 8).forEach(m => {
+      txt += `· ${isoDate(m.ts)} · ${m.title}\n  ${m.content.slice(0, 120)}${m.content.length > 120 ? '…' : ''}\n\n`;
+    });
+    return { text: txt };
+  }
+
+  const corpus = hits.slice(0, 12).map(m => `[${isoDate(m.ts)}] ${m.title}\n${m.content}`).join('\n\n---\n\n');
+  const sys = `You are botler · a sovereign personal memory agent. The user wants a prep brief for: "${query}". Build a structured brief based ONLY on the memory items below. Include: last contact, key people, open items, suggested agenda. Cite dates. Don't invent.`;
+  const brief = await aiComplete(sys, corpus, 800);
+  return { text: brief || corpus.slice(0, 1000) };
+}
+
+/* ═══════════ COMMAND · FIND ═══════════ */
+async function cmdFind(query) {
+  if (!query) return { text: 'tell me what to find.' };
+  const q = query.toLowerCase();
+  const hits = STATE.memory.filter(m =>
+    (m.content + ' ' + m.title + ' ' + m.tags.join(' ') + ' ' + m.people.join(' ')).toLowerCase().includes(q)
+  ).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+
+  if (hits.length === 0) {
+    return { text: `nothing found for "${query}".` };
+  }
+
+  let html = `<strong>${hits.length} ${hits.length === 1 ? 'match' : 'matches'}</strong> for "${esc(query)}":<br><br>`;
+  hits.slice(0, 10).forEach(m => {
+    const idx = m.content.toLowerCase().indexOf(q);
+    let snippet = m.content;
+    if (idx >= 0) {
+      const start = Math.max(0, idx - 40);
+      const end = Math.min(m.content.length, idx + query.length + 80);
+      snippet = (start > 0 ? '…' : '') + m.content.slice(start, end) + (end < m.content.length ? '…' : '');
+      const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      snippet = esc(snippet).replace(re, '<code>$1</code>');
+    }
+    html += `<div style="margin-bottom:10px;"><strong>${esc(m.title)}</strong> · <span class="dim small mono">${isoDate(m.ts)} · ${m.kind}</span><br><span class="small">${snippet}</span></div>`;
+  });
+  return { html };
+}
+
+/* ═══════════ COMMAND · JOURNAL ═══════════ */
+async function cmdJournal() {
+  const today = isoDate(new Date());
+  const start = new Date(); start.setHours(0,0,0,0);
+  const items = STATE.memory.filter(m => new Date(m.ts) >= start && m.kind !== MEM_KINDS.DAILY);
+
+  let body;
+  if (items.length === 0) {
+    body = `## ${today}\n\nQuiet day. No notes captured.`;
+  } else if (aiTier() === 'T0') {
+    body = `## ${today}\n\n${items.length} items today:\n\n`;
+    items.forEach(m => { body += `· ${m.title}\n`; });
+    const allTags = [...new Set(items.flatMap(m => m.tags))];
+    const allPeople = [...new Set(items.flatMap(m => m.people))];
+    if (allTags.length) body += `\ntags: ${allTags.join(', ')}\n`;
+    if (allPeople.length) body += `people: ${allPeople.join(', ')}\n`;
+  } else {
+    const corpus = items.map(m => `[${m.kind}] ${m.title}\n${m.content}`).join('\n\n---\n\n');
+    const sys = `You are botler · the user's sovereign memory agent. Generate a daily journal entry for ${today} in markdown. Structure: ## ${today}\n\nBUILT: ...\nMEETINGS: ...\nCOMMS: ...\nDECISIONS: ...\nBLOCKERS: ...\nTOMORROW: ...\n\nUse only facts from the user's notes below. Be concise. Don't invent.`;
+    body = await aiComplete(sys, corpus, 800) || `## ${today}\n\n${items.length} items captured.`;
+  }
+
+  const id = 'daily_' + today;
+  const item = {
+    id, kind: MEM_KINDS.DAILY,
+    title: today + ' · daily summary',
+    content: body, ts: isoNow(),
+    tags: ['daily'], people: [], deadlines: [],
+  };
+  await dbPut('memory', item);
+  // remove any existing daily for today
+  STATE.memory = STATE.memory.filter(m => m.id !== id);
+  STATE.memory.push(item);
+
+  return { text: body };
+}
+
+/* ═══════════ RENDER · HOME ═══════════ */
+function renderHome() {
+  const recent = STATE.memory.slice().sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 5);
+  const mount = $('#recentList');
+  if (recent.length === 0) {
+    mount.innerHTML = `<div class="empty"><div class="emoji">◊</div><div class="ttl">Nothing yet</div><div class="sub">Tell me what to remember.</div></div>`;
+    return;
+  }
+  mount.innerHTML = '<div class="mem-list">' + recent.map(memCardHtml).join('') + '</div>';
+}
+
+function memCardHtml(m) {
+  const tags = m.tags.slice(0, 4).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+  return `<a href="#" class="mem-card" onclick="viewMem('${m.id}'); return false;">
+    <div class="title">${esc(m.title)}</div>
+    <div class="meta">${isoDate(m.ts)} · ${m.kind}${m.people.length ? ' · ' + esc(m.people[0]) + (m.people.length > 1 ? ' +' + (m.people.length - 1) : '') : ''}</div>
+    <div class="preview">${esc(m.content.slice(0, 140))}${m.content.length > 140 ? '…' : ''}</div>
+    ${tags ? `<div class="tags">${tags}</div>` : ''}
+  </a>`;
+}
+
+function viewMem(id) {
+  const m = STATE.memory.find(x => x.id === id);
+  if (!m) return;
+  modal({
+    title: m.title,
+    body: `<p class="small dim mono">${isoDate(m.ts)} · ${m.kind}</p><div style="white-space:pre-wrap; font-size:14px; max-height:50vh; overflow-y:auto; padding:10px; background:var(--void-3); border-radius:6px;">${esc(m.content)}</div>${m.tags.length ? `<p class="small dim" style="margin-top:8px">tags: ${m.tags.join(', ')}</p>` : ''}${m.people.length ? `<p class="small dim">people: ${m.people.join(', ')}</p>` : ''}${m.deadlines.length ? `<p class="small dim">deadlines: ${m.deadlines.join(', ')}</p>` : ''}`,
+    actions: [
+      { label: 'copy', kind: 'ghost', onClick: async () => { await navigator.clipboard.writeText(m.title + '\n\n' + m.content); toast('copied'); closeModal(); }},
+      { label: 'delete', kind: 'danger', onClick: async () => { await dbDelete('memory', id); STATE.memory = STATE.memory.filter(x => x.id !== id); closeModal(); renderHome(); renderMemory(); toast('deleted'); }},
+      { label: 'close', kind: 'ghost', onClick: closeModal },
+    ],
+  });
+}
+
+/* ═══════════ RENDER · MEMORY ═══════════ */
+function renderMemory() {
+  const byKind = (k) => STATE.memory.filter(m => m.kind === k).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+  renderMemList('dailyList', byKind(MEM_KINDS.DAILY));
+  renderMemList('projectsList', byKind(MEM_KINDS.PROJECT));
+  renderMemList('peopleList', byKind(MEM_KINDS.PERSON));
+  renderMemList('notesList', byKind(MEM_KINDS.NOTE));
+}
+
+function renderMemList(mountId, items) {
+  const mount = $('#' + mountId);
+  if (items.length === 0) {
+    mount.innerHTML = `<div class="dim small" style="padding: 6px 0;">none yet</div>`;
+    return;
+  }
+  mount.innerHTML = '<div class="mem-list">' + items.map(memCardHtml).join('') + '</div>';
+}
+
+function filterMemory() {
+  const q = $('#memSearch').value.toLowerCase();
+  if (!q) { renderMemory(); return; }
+  const byKind = (k) => STATE.memory.filter(m =>
+    m.kind === k && (m.content + ' ' + m.title + ' ' + m.tags.join(' ') + ' ' + m.people.join(' ')).toLowerCase().includes(q)
+  ).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+  renderMemList('dailyList', byKind(MEM_KINDS.DAILY));
+  renderMemList('projectsList', byKind(MEM_KINDS.PROJECT));
+  renderMemList('peopleList', byKind(MEM_KINDS.PERSON));
+  renderMemList('notesList', byKind(MEM_KINDS.NOTE));
+}
+
+/* ═══════════ INBOX · drag/drop + paste + Gmail ═══════════ */
+function renderInbox() {
+  const mount = $('#processedList');
+  const processed = STATE.inbox.slice().sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 10);
+  if (processed.length === 0) {
+    mount.innerHTML = `<div class="dim small">nothing processed yet · drop a file or paste a URL above</div>`;
+  } else {
+    mount.innerHTML = '<div class="mem-list">' + processed.map(p => `
+      <div class="mem-card">
+        <div class="title">${esc(p.title)}</div>
+        <div class="meta">${isoDate(p.ts)} · ${esc(p.source)}</div>
+        <div class="preview">${esc((p.summary || p.content || '').slice(0, 140))}…</div>
+      </div>
+    `).join('') + '</div>';
+  }
+
+  // Gmail panel
+  const gmail = CONFIG.oauth.google;
+  const gMount = $('#gmailMount');
+  if (gmail && gmail.access_token) {
+    gMount.innerHTML = `
+      <div class="prompt-wrap">
+        <div class="prompt-label"><span class="pre">gmail</span><span>pull recent threads · summarise · log</span></div>
+        <div class="small dim" style="margin-bottom:8px">connected · token expires in ${Math.max(0, Math.floor((gmail.expires_at - Date.now()) / 60000))} min</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="pullGmail(20)">pull last 20 messages</button>
+          <button class="btn btn-ghost" onclick="goTab('integrations')">manage OAuth</button>
+        </div>
+      </div>
+    `;
+  } else {
+    gMount.innerHTML = `
+      <div class="prompt-wrap">
+        <div class="prompt-label"><span class="pre">gmail</span><span>connect via OAuth · readonly</span></div>
+        <p class="small dim" style="margin-bottom:10px">connect your Gmail to pull recent messages into memory · readonly scope · token stays on your device</p>
+        <button class="btn btn-primary" onclick="goTab('integrations')">connect</button>
+      </div>
+    `;
+  }
+}
+
+const dropzone = document.getElementById('dropzone');
+['dragenter', 'dragover'].forEach(e => dropzone.addEventListener(e, (ev) => { ev.preventDefault(); dropzone.classList.add('over'); }));
+['dragleave', 'drop'].forEach(e => dropzone.addEventListener(e, (ev) => { ev.preventDefault(); dropzone.classList.remove('over'); }));
+dropzone.addEventListener('drop', (e) => { handleFiles(e.dataTransfer.files); });
+
+async function handleFiles(files) {
+  for (const f of files) {
+    try {
+      let content = '';
+      let source = f.type || 'file';
+      if (f.type.startsWith('text/') || f.name.endsWith('.md') || f.name.endsWith('.txt')) {
+        content = await f.text();
+      } else if (f.type === 'application/pdf' || f.name.endsWith('.pdf')) {
+        content = await extractPdf(f);
+        source = 'pdf';
+      } else if (f.type.startsWith('image/')) {
+        const blob = await f.arrayBuffer();
+        const id = genId('blob');
+        await dbPut('blob', { id, type: f.type, data: blob, name: f.name });
+        content = `[image · ${f.name} · stored · ${Math.round(f.size / 1024)}KB]`;
+        source = 'image';
+      } else {
+        // store blob, log
+        const id = genId('blob');
+        const blob = await f.arrayBuffer();
+        await dbPut('blob', { id, type: f.type, data: blob, name: f.name });
+        content = `[file · ${f.name} · stored · ${Math.round(f.size / 1024)}KB]`;
+        source = 'file';
+      }
+      await processInboxItem({ title: f.name, content, source, kind: 'file' });
+      toast('processed · ' + f.name, 'success');
+    } catch (e) {
+      toast('error · ' + f.name + ' · ' + e.message, 'error');
+    }
+  }
+  renderInbox();
+}
+
+async function extractPdf(file) {
+  // dynamic load pdf.js (CDN allowed for inbox processing)
+  try {
+    if (!window.pdfjsLib) {
+      const mod = await import('https://esm.run/pdfjs-dist@4.0.379');
+      window.pdfjsLib = mod;
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.run/pdfjs-dist@4.0.379/build/pdf.worker.mjs';
+    }
+    const arr = await file.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({ data: arr }).promise;
+    let text = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 50); i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      text += tc.items.map(it => it.str).join(' ') + '\n\n';
+    }
+    return text;
+  } catch (e) {
+    return `[pdf extraction failed: ${e.message}]`;
+  }
+}
+
+async function processPaste() {
+  const text = $('#pasteInput').value.trim();
+  if (!text) return;
+  $('#pasteInput').value = '';
+  try {
+    if (/^https?:\/\//.test(text)) {
+      // URL · fetch and summarise
+      try {
+        const r = await fetch(text, { mode: 'cors' });
+        const html = await r.text();
+        const stripped = html.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 5000);
+        await processInboxItem({ title: text, content: stripped, source: 'url', kind: 'url' });
+      } catch (e) {
+        // CORS-blocked · store URL itself
+        await processInboxItem({ title: text, content: `[URL · CORS blocked · stored for reference]`, source: 'url', kind: 'url' });
+      }
+    } else {
+      await processInboxItem({ title: text.slice(0, 60), content: text, source: 'paste', kind: 'text' });
+    }
+    toast('processed', 'success');
+    renderInbox();
+  } catch (e) {
+    toast('error · ' + e.message, 'error');
+  }
+}
+
+async function processInboxItem(item) {
+  const id = genId('inb');
+  const full = { ...item, id, ts: isoNow() };
+
+  // summarise via AI if available
+  if (aiTier() !== 'T0' && item.content.length > 200) {
+    try {
+      const sys = `You are botler · summarise the following ${item.source} content in 3-5 bullet points. Be specific. Cite key names/dates/numbers. Don't invent.`;
+      const summary = await aiComplete(sys, item.content.slice(0, 4000), 400);
+      if (summary) full.summary = summary;
+    } catch (_) {}
+  }
+
+  await dbPut('inbox', full);
+  STATE.inbox.push(full);
+
+  // also auto-log into memory as a note
+  await cmdRemember(`[from ${item.source}] ${item.title}\n\n${full.summary || item.content.slice(0, 800)}`);
+}
+
+/* ═══════════ OAUTH · Google Gmail + Calendar ═══════════ */
+const OAUTH_CONFIG = {
+  google: {
+    client_id: '', // user sets in Integrations panel
+    auth_url: 'https://accounts.google.com/o/oauth2/v2/auth',
+    token_url: 'https://oauth2.googleapis.com/token',
+    scopes: [
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/calendar.readonly',
+    ],
+  },
+};
+
+function renderIntegrations() {
+  const mount = $('#integrationsList');
+  const google = CONFIG.oauth.google;
+  mount.innerHTML = `
+    <div class="prompt-wrap">
+      <div class="prompt-label"><span class="pre">google</span><span>Gmail + Calendar · readonly</span></div>
+      ${google && google.access_token ? `
+        <div class="small" style="color:var(--success); margin-bottom:8px;">✓ connected · expires in ${Math.max(0, Math.floor((google.expires_at - Date.now()) / 60000))} minutes</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="oauthRevokeGoogle()">disconnect</button>
+        </div>
+      ` : `
+        <p class="small dim" style="margin-bottom: 10px;">Botler uses OAuth 2.0 PKCE flow · token stays on your device. To connect Google services, you need to set up an OAuth client ID once.</p>
+        <div class="field">
+          <label>Google OAuth Client ID</label>
+          <input type="text" id="g_client_id" placeholder="123456789-abcdef.apps.googleusercontent.com" value="${esc(CONFIG.oauth.google_client_id || '')}">
+          <div class="hint">Create at <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--brass)">console.cloud.google.com</a> · add this site URL as a redirect URI · enable Gmail API and Calendar API</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="oauthGoogleStart()">connect Gmail + Calendar</button>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+async function oauthGoogleStart() {
+  const clientId = $('#g_client_id').value.trim();
+  if (!clientId) { toast('paste your Google OAuth Client ID first', 'error'); return; }
+  CONFIG.oauth.google_client_id = clientId;
+  saveConfigSilent();
+
+  // PKCE
+  const verifier = randomString(64);
+  sessionStorage.setItem('oauth_verifier', verifier);
+  const challenge = await sha256Base64Url(verifier);
+  const state = randomString(16);
+  sessionStorage.setItem('oauth_state', state);
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: window.location.origin + window.location.pathname,
+    response_type: 'code',
+    scope: OAUTH_CONFIG.google.scopes.join(' '),
+    state,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+    access_type: 'online',
+    prompt: 'consent',
+  });
+  window.location.href = OAUTH_CONFIG.google.auth_url + '?' + params.toString();
+}
+
+async function oauthGoogleCallback(code) {
+  const verifier = sessionStorage.getItem('oauth_verifier');
+  if (!verifier) { toast('OAuth state lost · retry', 'error'); return; }
+
+  const clientId = CONFIG.oauth.google_client_id;
+  try {
+    const r = await fetch(OAUTH_CONFIG.google.token_url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        code,
+        code_verifier: verifier,
+        grant_type: 'authorization_code',
+        redirect_uri: window.location.origin + window.location.pathname,
+      }),
+    });
+    if (!r.ok) throw new Error('token exchange failed: ' + r.status);
+    const j = await r.json();
+    CONFIG.oauth.google = {
+      access_token: j.access_token,
+      expires_at: Date.now() + (j.expires_in || 3600) * 1000,
+    };
+    saveConfigSilent();
+    sessionStorage.removeItem('oauth_verifier');
+    sessionStorage.removeItem('oauth_state');
+    toast('connected to Google · readonly', 'success');
+  } catch (e) {
+    toast('OAuth failed · ' + e.message, 'error');
+  }
+}
+
+function oauthRevokeGoogle() {
+  CONFIG.oauth.google = null;
+  saveConfigSilent();
+  toast('disconnected · revoke fully in your Google account', 'success');
+  renderIntegrations();
+}
+
+function randomString(len) {
+  const arr = crypto.getRandomValues(new Uint8Array(len));
+  return Array.from(arr).map(b => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'.charAt(b % 66)).join('');
+}
+
+async function sha256Base64Url(s) {
+  const buf = new TextEncoder().encode(s);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function pullGmail(count) {
+  const tok = CONFIG.oauth.google?.access_token;
+  if (!tok) { toast('connect Gmail first', 'error'); return; }
+  toast('pulling gmail...', 'success');
+  try {
+    const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${count}`, {
+      headers: { 'Authorization': 'Bearer ' + tok },
+    });
+    if (!r.ok) throw new Error('gmail list failed: ' + r.status);
+    const j = await r.json();
+    const ids = (j.messages || []).slice(0, count).map(m => m.id);
+    let processed = 0;
+    for (const id of ids) {
+      const mr = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}?format=metadata&metadataHeaders=Subject&metadataHeaders=From&metadataHeaders=Date`, {
+        headers: { 'Authorization': 'Bearer ' + tok },
+      });
+      if (!mr.ok) continue;
+      const m = await mr.json();
+      const headers = Object.fromEntries((m.payload?.headers || []).map(h => [h.name.toLowerCase(), h.value]));
+      const title = headers.subject || '(no subject)';
+      const snippet = m.snippet || '';
+      const content = `From: ${headers.from || 'unknown'}\nDate: ${headers.date || ''}\nSubject: ${title}\n\n${snippet}`;
+      await processInboxItem({ title, content, source: 'gmail', kind: 'email' });
+      processed++;
+    }
+    toast(`pulled ${processed} messages`, 'success');
+    renderInbox();
+  } catch (e) {
+    toast('gmail pull failed · ' + e.message, 'error');
+  }
+}
+
+/* ═══════════ JOURNAL scheduling ═══════════ */
+let journalTimer = null;
+function scheduleJournal() {
+  if (journalTimer) clearTimeout(journalTimer);
+  if (!CONFIG.auto_journal) return;
+  const [hh, mm] = (CONFIG.journal_time || '23:00').split(':').map(Number);
+  const next = new Date();
+  next.setHours(hh, mm, 0, 0);
+  if (next <= new Date()) next.setDate(next.getDate() + 1);
+  const ms = next - new Date();
+  journalTimer = setTimeout(async () => {
+    try { await cmdJournal(); toast('auto-journal logged', 'success'); } catch (_) {}
+    scheduleJournal();
+  }, ms);
+}
+
+/* ═══════════ EXPORT / IMPORT ═══════════ */
+async function exportAll() {
+  // export memory + inbox as JSON
+  const bundle = {
+    tool: 'botler', version: NODE.version, exported: isoNow(),
+    config: CONFIG,
+    memory: STATE.memory,
+    inbox: STATE.inbox,
+  };
+  // also generate per-item markdown for human readability
+  const md = STATE.memory.map(m => `# ${m.title}\n\nKind: ${m.kind}\nDate: ${isoDate(m.ts)}\nTags: ${m.tags.join(', ')}\nPeople: ${m.people.join(', ')}\n\n${m.content}\n\n---\n`).join('\n');
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `botler-export-${isoDate(new Date())}.json`; a.click();
+  URL.revokeObjectURL(url);
+
+  const mdBlob = new Blob([md], { type: 'text/markdown' });
+  const mdUrl = URL.createObjectURL(mdBlob);
+  const a2 = document.createElement('a');
+  a2.href = mdUrl; a2.download = `botler-memory-${isoDate(new Date())}.md`; a2.click();
+  URL.revokeObjectURL(mdUrl);
+  toast('exported · JSON + markdown', 'success');
+}
+
+function exportConfig() {
+  const blob = new Blob([JSON.stringify(CONFIG, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'botler-config.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('config exported', 'success');
+}
+
+function importMemory() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'application/json,.json';
+  input.onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = async () => {
+      try {
+        const j = JSON.parse(r.result);
+        if (j.memory) { for (const m of j.memory) { await dbPut('memory', m); } }
+        if (j.inbox)  { for (const i of j.inbox)  { await dbPut('inbox',  i); } }
+        if (j.config) { CONFIG = { ...CONFIG, ...j.config }; saveConfigSilent(); }
+        await boot();
+        toast('imported', 'success');
+      } catch (e) { toast('invalid file', 'error'); }
+    };
+    r.readAsText(f);
+  };
+  input.click();
+}
+
+function wipeAll() {
+  modal({
+    title: 'Wipe everything?',
+    body: '<p>This deletes all memory, inbox items, OAuth tokens, and your config from this device. The deletion cannot be undone.</p><p><strong>Export first</strong> if you might want any of it later.</p>',
+    actions: [
+      { label: 'Cancel', kind: 'ghost', onClick: closeModal },
+      { label: 'Wipe forever', kind: 'danger', onClick: async () => {
+        await dbClear('memory');
+        await dbClear('inbox');
+        await dbClear('blob');
+        localStorage.removeItem(STORE_KEY);
+        sessionStorage.clear();
+        location.reload();
+      }},
+    ],
+  });
+}
+
+/* ═══════════ BOOT ═══════════ */
+async function boot() {
+  await dbOpen();
+  STATE.memory = await dbGetAll('memory');
+  STATE.inbox = await dbGetAll('inbox');
+  loadConfig();
+  fillConfigForm();
+  renderAiChip();
+  renderHome();
+  renderMemory();
+  renderInbox();
+  renderIntegrations();
+  scheduleJournal();
+
+  // PWA · register sw
+  if ('serviceWorker' in navigator) {
+    try { await navigator.serviceWorker.register('./sw.js'); } catch (_) {}
+  }
+
+  // mesh signal
+  try {
+    new BroadcastChannel('fall-signal').postMessage({ source: NODE.id, kind: 'tool:ready', payload: { prime: NODE.prime, domain: NODE.domain } });
+  } catch (_) {}
+
+  // OAuth callback handler
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('code')) {
+    const state = sessionStorage.getItem('oauth_state');
+    if (state && state === params.get('state')) {
+      await oauthGoogleCallback(params.get('code'));
+      // clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      renderIntegrations();
+      goTab('integrations');
+    }
+  }
+
+  console.log('%c◊·κ=φ⁴ botler · prime 619 · ready · ' + STATE.memory.length + ' memories', 'color:#c2a060; font-weight: bold;');
+}
+
+boot();
+
+/* expose for console debugging */
+window.botler = {
+  state: STATE,
+  config: () => CONFIG,
+  loadWebLLM,
+  cmd: (text) => { $('#prompt').value = text; runPrompt(); },
+  version: NODE.version,
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "botler · sovereign personal memory agent",
+  "short_name": "botler",
+  "description": "Remembers what you forgot. Finds anything at a drop of a hat. WebLLM offline. OAuth client-side. Your machine. Your data.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%230a0a0f' rx='32'/><text x='96' y='132' font-family='Times New Roman, serif' font-size='120' font-weight='700' text-anchor='middle' fill='%23c2a060'>b</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%230a0a0f' rx='80'/><text x='256' y='350' font-family='Times New Roman, serif' font-size='320' font-weight='700' text-anchor='middle' fill='%23c2a060'>b</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
