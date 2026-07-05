@@ -1,0 +1,29 @@
+{
+  "$schema": "https://sjgant80-hub.github.io/onehub/modules/manifest.schema.json",
+  "name": "botler",
+  "version": "1.0.0",
+  "publisher": "AI-Native Solutions",
+  "publisher_url": "https://www.ai-nativesolutions.com/",
+  "licence": "MIT",
+  "description": "In-browser Llama 3.1 8B via WebLLM. Free-tier LLM for every FallHub instance. Powers the training simulator and offline drafting. Zero cost forever.",
+  "provides": [
+    "in_browser_llm",
+    "training_sim_engine",
+    "offline_drafting",
+    "free_tier_generation"
+  ],
+  "tools": [],
+  "kernel_extension": {},
+  "compatible_verticals": ["*"],
+  "requires": ["byok_adapter@>=1.0.0"],
+  "ui_surfaces": [],
+  "js_entrypoint": "modules/botler/index.js",
+  "constants": {
+    "default_model": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
+    "approx_download_mb": 4200
+  },
+  "mit": true,
+  "konomi_seal": "◊·κ=1",
+  "estate": true,
+  "canonical_ref": "reference implementation for FallHub free-tier fallback"
+}
